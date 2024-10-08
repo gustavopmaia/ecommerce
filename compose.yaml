@@ -1,0 +1,53 @@
+# docker-compose.yml
+
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    container_name: ecommerce_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: ecommerce_backend
+    restart: always
+    env_file:
+      - ./server/.env
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - ecommerce-network
+
+  frontend:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: ecommerce_frontend
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - backend
+    networks:
+      - ecommerce-network
+
+volumes:
+  db-data:
+
+networks:
+  ecommerce-network:
+    driver: bridge
