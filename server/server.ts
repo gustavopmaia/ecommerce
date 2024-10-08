@@ -4,7 +4,7 @@ const app = fastify({ logger: true })
 
 const PORT = Number(process.env.PORT)
 
-app.listen({ port: 8080 }, (err, address) => {
+app.listen({ port: 8080, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     console.error(err)
     process.exit(1)

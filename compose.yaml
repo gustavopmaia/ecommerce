@@ -1,6 +1,6 @@
 # docker-compose.yml
 
-version: "3.8"
+version: '3.8'
 
 services:
   db:
@@ -12,7 +12,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - db-data:/var/lib/postgresql/data
 
@@ -26,7 +26,7 @@ services:
       - ./server/.env
       - .env
     ports:
-      - "8080:8080"
+      - '8080:8080'
     depends_on:
       - db
     networks:
@@ -36,10 +36,14 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL}
     container_name: ecommerce_frontend
     restart: always
+    env_file:
+      - ./.env
     ports:
-      - "8081:8081"
+      - '3000:80' # Mapeia a porta 80 do Nginx para a porta 3000 do host
     depends_on:
       - backend
     networks:
